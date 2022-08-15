@@ -8,6 +8,9 @@ services:
     # Tells docker-compose where to build the dockerfile, in this case the context tells it to user the current root dir
     build:
       context: .
+      # When running this image via docker-compose, create a build argument called DEV set as true
+      args:
+        - DEV=true
     # Port mapping of the local machine to the docker container
     ports:
       - "8000:8000"
