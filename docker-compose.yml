@@ -21,3 +21,32 @@ services:
     # Command that is used to run the service
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
+    environment:
+      # Nane of the service it is connecting with
+      - DB_HOST=db
+      # Name of the db on the service
+      - DB_NAME=devdb
+      # Credentials for the user on the service
+      - DB_USER=devuser
+      - DB_PASS=changeme
+    # Tells docker compose that this service needs to wait for this other service to be started first
+    depends_on:
+      - db
+
+  db:
+    # Image the service is using, in this case a lightweight version of the postgres image on docker hub
+    image: postgres:13-alpine
+    # Volumen mapping for the database, [name_of_the_volume]:[location inside the container per documentation]
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+    # These set the initial configuration for our database service
+    environment:
+      # Name of the database for local development service
+      - POSTGRES_DB=devdb
+      # Credentials for the user created for the local development service
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+
+volumes:
+  # Name of the volume, docker-compose will store it in the default location
+  dev-db-data:
