@@ -3,7 +3,7 @@ Test custom Django management commands.
 """
 from unittest.mock import patch
 
-from psycopg2 import OperationalError as Psycopg2Error
+from psycopg2 import OperationalError as Psycopg2OpError
 
 from django.core.management import call_command
 from django.db.utils import OperationalError
@@ -23,7 +23,7 @@ class CommandTest(SimpleTestCase):
         call_command('wait_for_db')
 
         # Have to assert_called_once_with here since we are accessing the database only once
-        patched_check.assert_called_once_with(database=['default'])
+        patched_check.assert_called_once_with(databases=['default'])
 
     # Overrides the sleep method used in the command so the test doesn't wait for sleep to occur
     @patch('time.sleep')
@@ -34,7 +34,7 @@ class CommandTest(SimpleTestCase):
         # Mocking an exception being raised, the first two times raise Psycopg2Error, the next three times raise
         # OperationalError ( postgres can give differing errors depending on what stage of the startup process )
         # the final sixth time it will return True
-        patched_check.side_effect = [Psycopg2Error] * 2 + [OperationalError] * 3 + [True]
+        patched_check.side_effect = [Psycopg2OpError] * 2 + [OperationalError] * 3 + [True]
 
         call_command('wait_for_db')
 
@@ -42,4 +42,4 @@ class CommandTest(SimpleTestCase):
         self.assertEqual(patched_check.call_count, 6)
 
         # Have to use assert_called_with here since we are accessing the database multiple times
-        patched_check.assert_called_with(database=['default'])
+        patched_check.assert_called_with(databases=['default'])
