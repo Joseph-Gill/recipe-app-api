@@ -26,6 +26,7 @@ jobs:
         # Predefined action to checkout the actual code so that it can be accessed for testing and linting
         uses: actions/checkout@v2
       - name: Test
-        run: docker-compose run --rm app sh -c "python manage.py test"
+        # Added the wait_for_db command so that the db is fully running before the tests are attempted
+        run: docker-compose run --rm app sh -c "python manage.py wait_for_db && python manage.py test"
       - name: Lint
         run: docker-compose run --rm app sh -c "flake8"
