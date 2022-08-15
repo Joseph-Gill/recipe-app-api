@@ -41,7 +41,7 @@ RUN python -m venv /py && \
         django-user
 
 # Update the PATH variable inside the enviornment, avoids having to define the entire path when running commands
-ENV PATH="py/bin:$PATH"
+ENV PATH="/py/bin:$PATH"
 
 # Specifies the user that you are switching to from the root user
 USER django-user
