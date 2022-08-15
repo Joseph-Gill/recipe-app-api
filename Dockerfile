@@ -25,14 +25,22 @@ ARG DEV=false
 RUN python -m venv /py && \
     # Install and upgrade the python package manager pip
     /py/bin/pip install --upgrade pip && \
+    # Installs the postgres client package so that psycopg2 can connect
+    apk add --update --no-cache postgresql-client && \
+    # Installs dependencies needed to setup psycopg2 that can be removed after build completes
+    apk add --update --no-cache --virtual .tmp-build-deps \
+        build-base postgresql-dev musl-dev && \
     # Install required dependencies inside the virtual environment
     /py/bin/pip install -r /tmp/requirements.txt && \
     # Shell script that does an if statement checking DEV, if it is true install requirements.dev.txt
     if [ $DEV = "true" ]; \
-      then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
+        then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
     fi && \
     # Remove the /tmp directory to prevent there being extra dependencies on the image, keep it as lightweight as possible
     rm -rf /tmp && \
+    # Removes the dependencies that are not needed after the build is completed and psycopg2 is setup \
+    # Doing this will help keep the docker image more lightweight
+    apk del .tmp-build-deps &&  \
     # Add new user inside the image, best practice to not use the root user, disable the ability to log on with a password,
     # prevent the creation of a home directory, and specify the name of the user
     adduser \
