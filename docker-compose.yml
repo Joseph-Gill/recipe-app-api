@@ -1,0 +1,20 @@
+# Version of docker-compose syntax that we are using
+version: "3.9"
+
+# Services being run by docker-compose
+services:
+  # Name of the service being run
+  app:
+    # Tells docker-compose where to build the dockerfile, in this case the context tells it to user the current root dir
+    build:
+      context: .
+    # Port mapping of the local machine to the docker container
+    ports:
+      - "8000:8000"
+    # Volume mapping of locations on the local machine to the docker container, this allows you to dynamically update
+    # the volume inside the cotainer with changes made on the local machine without having to rebuild the container
+    volumes:
+      - ./app:/app
+    # Command that is used to run the service
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
