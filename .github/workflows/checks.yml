@@ -1,0 +1,31 @@
+---
+name: Checks
+
+# Defines what action this is run on, so for this it is run whenever code is pushed to the repo
+on: [push]
+
+# Defines the jobs that need to be executed
+jobs:
+  # ID of the job, can be used to be referenced inside Github Actions
+  test-lint:
+    # Human friendly name displayed on the Github interface
+    name: Test and Lint
+    # Defines which runner the job is run upon
+    runs-on: ubuntu-20.04
+    # Defines the steps of the job
+    steps:
+        # Define the human friendly name displayed on the Github interface
+      - name: Login to Docker Hub
+        # Access a predefined action that is already setup, in this case login to docker hub, the @ specifies the version
+        uses: docker/login-action@v1
+        # Define what the credentials uses to do the login, this will access the variables defined in Github Secrets
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Checkout
+        # Predefined action to checkout the actual code so that it can be accessed for testing and linting
+        uses: actions/checkout@v2
+      - name: Test
+        run: docker-compose run --rm app sh -c "python manage.py test"
+      - name: Lint
+        run: docker-compose run --rm app sh -c "flake8"
