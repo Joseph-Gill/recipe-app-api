@@ -20,4 +20,4 @@ class ModelTests(TestCase):
         # Check that the values match after creation
         self.assertEqual(user.email, email)
         # Check the password through the hashing system
-        self.assertEqual(user.check_password(password))
+        self.assertTrue(user.check_password(password))
