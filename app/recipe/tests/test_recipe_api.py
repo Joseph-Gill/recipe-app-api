@@ -25,7 +25,7 @@ def create_recipe(user, **params):
         'description': 'Sample description',
         'link': 'https://example.com/recipe.pdf'
     }
-    defaults.udpdate(params)
+    defaults.update(params)
 
     recipe = Recipe.objects.create(user=user, **defaults)
     return recipe
