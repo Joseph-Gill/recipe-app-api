@@ -18,6 +18,8 @@ services:
     # the volume inside the cotainer with changes made on the local machine without having to rebuild the container
     volumes:
       - ./app:/app
+      # Setup volume mapping for the static data
+      - dev-static-data:/vol/web
     # Command that is used to run the service
     # First - run the wait_for_db command to make sure postgres is fully started
     # Second - run the migrate command to check that all migrations have been applied
@@ -55,3 +57,4 @@ services:
 volumes:
   # Name of the volume, docker-compose will store it in the default location
   dev-db-data:
+  dev-static-data:

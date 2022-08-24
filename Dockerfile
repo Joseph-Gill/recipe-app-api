@@ -46,7 +46,14 @@ RUN python -m venv /py && \
     adduser \
         --disabled-password \
         --no-create-home \
-        django-user
+        django-user && \
+    # Create the directories and all sub directories for storing media files
+    mkdir -p /vol/web/media && \
+    mkdir -p /vol/web/static && \
+    # Change the ownership of vol directory and all sub directories to django-user
+    chown -R django-user:django-user /vol && \
+    # Change the mode so that django-user can make changes to vol directory and all sub directories
+    chmod -R 775 /vol
 
 # Update the PATH variable inside the enviornment, avoids having to define the entire path when running commands
 ENV PATH="/py/bin:$PATH"
