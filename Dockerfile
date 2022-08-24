@@ -25,11 +25,11 @@ ARG DEV=false
 RUN python -m venv /py && \
     # Install and upgrade the python package manager pip
     /py/bin/pip install --upgrade pip && \
-    # Installs the postgres client package so that psycopg2 can connect
-    apk add --update --no-cache postgresql-client && \
-    # Installs dependencies needed to setup psycopg2 that can be removed after build completes
+    # Installs the postgres client package so that psycopg2 can connect, install jpeg-dev package for Pillow
+    apk add --update --no-cache postgresql-client jpeg-dev && \
+    # Installs dependencies needed to setup psycopg2 and Pillow that can be removed after build complete
     apk add --update --no-cache --virtual .tmp-build-deps \
-        build-base postgresql-dev musl-dev && \
+        build-base postgresql-dev musl-dev zlib zlib-dev && \
     # Install required dependencies inside the virtual environment
     /py/bin/pip install -r /tmp/requirements.txt && \
     # Shell script that does an if statement checking DEV, if it is true install requirements.dev.txt
