@@ -279,7 +279,7 @@ class PrivateRecipeAPITests(TestCase):
             'title': 'Cauliflower Tacos',
             'time_minutes': 60,
             'price': Decimal('4.30'),
-            'ingredients': [{'name': 'Cauliflower'}, {'name', 'Salt'}]
+            'ingredients': [{'name': 'Cauliflower'}, {'name': 'Salt'}]
         }
         res = self.client.post(RECIPES_URL, payload, format='json')
 
