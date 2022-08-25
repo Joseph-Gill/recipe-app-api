@@ -36,6 +36,8 @@ services:
       # Credentials for the user on the service
       - DB_USER=devuser
       - DB_PASS=changeme
+      # Set DEBUG as true when passed to django settings.py
+      - DEBUG=1
     # Tells docker compose that this service needs to wait for this other service to be started first
     depends_on:
       - db
