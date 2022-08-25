@@ -1,5 +1,5 @@
-# Sets this as a shell script file
 #!/bin/sh
+# Sets this as a shell script file
 
 #If any part of the next steps fail, fail the entire script
 set -e
