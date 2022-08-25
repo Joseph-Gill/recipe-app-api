@@ -1,0 +1,60 @@
+# Version of docker-compose syntax that we are using
+version: "3.9"
+
+# Services being run by docker-compose
+services:
+  # Name of the service being run
+  app:
+    # Tells docker-compose where to build the dockerfile, in this case the context tells it to user the current root dir    build:
+    build:
+      context: .
+    # If service crashes, restart automatically
+    restart: always
+    # Volume created used to serve the static data through nginx proxy
+    volumes:
+      - static-data:/vol/web
+    # Enviornment variable configuration of the running service
+    enviornment:
+      - DB_HOST=db
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - SECRET_KEY=${DJANGO_SECRET_KEY}
+      - ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+    # Set up the dependency so the database starts first
+    depends_on:
+      - db
+  # Name of db service
+  db:
+    # Docker image used for service
+    image: postgres:13-alpine
+    # If service crashes, restart automatically
+    restart: always
+    # Volume created used to store the db data
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    # Enviornment variable configuration of the running service
+    enviornment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+  # Name of proxy service
+  proxy:
+    # Build the image for this service from the ./proxy directory
+    build:
+      context: ./proxy
+    restart: always
+    # Set up dependency so the app service is running
+    depends_on:
+      - app
+    # Map the port 80 on the local machine to port 8000 on the running host in the container
+    ports:
+      - 80:8000
+    # Volume created for serving static files
+    volumes:
+      - static-data:/vol/static
+  # Name of the volume, docker-compose will store it in the default location
+  volumes:
+    postgres-data:
+    # Same volume is used for app and proxy, so that it is readable by both services
+    static-data:
