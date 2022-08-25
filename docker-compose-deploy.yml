@@ -49,7 +49,7 @@ services:
       - app
     # Map the port 80 on the local machine to port 8000 on the running host in the container
     ports:
-      - 80:8000
+      - 8000:8000
     # Volume created for serving static files
     volumes:
       - static-data:/vol/static
