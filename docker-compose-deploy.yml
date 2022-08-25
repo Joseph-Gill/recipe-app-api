@@ -14,7 +14,7 @@ services:
     volumes:
       - static-data:/vol/web
     # Enviornment variable configuration of the running service
-    enviornment:
+    environment:
       - DB_HOST=db
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
@@ -34,7 +34,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     # Enviornment variable configuration of the running service
-    enviornment:
+    environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASS}
