@@ -54,7 +54,7 @@ services:
     volumes:
       - static-data:/vol/static
   # Name of the volume, docker-compose will store it in the default location
-  volumes:
-    postgres-data:
-    # Same volume is used for app and proxy, so that it is readable by both services
-    static-data:
+volumes:
+  postgres-data:
+  # Same volume is used for app and proxy, so that it is readable by both services
+  static-data:
