@@ -9,6 +9,8 @@ ENV PYTHONUNBUFFERED 1
 # Copy the requirements.txt and requirements.dev.txt from the local machine into the docker image
 COPY ./requirements.txt /tmp/requirements.txt
 COPY ./requirements.dev.txt /tmp/requirements.dev.txt
+# Copy over helper scripts
+COPY ./scripts /scripts
 # Copy the ./app directory from the local machine into the docker image
 COPY ./app /app
 # Change the current working directory to the /app directory inside the docker image
@@ -27,9 +29,11 @@ RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
     # Installs the postgres client package so that psycopg2 can connect, install jpeg-dev package for Pillow
     apk add --update --no-cache postgresql-client jpeg-dev && \
-    # Installs dependencies needed to setup psycopg2 and Pillow that can be removed after build complete
+    # Installs dependencies needed to setup psycopg2 and Pillow that can be removed after build complete \
+    # linux-headers is specific to installing a uWSGI interface \
+    # zlib and zlib dev are specific to installing Pillow
     apk add --update --no-cache --virtual .tmp-build-deps \
-        build-base postgresql-dev musl-dev zlib zlib-dev && \
+        build-base postgresql-dev musl-dev zlib zlib-dev linux-headers && \
     # Install required dependencies inside the virtual environment
     /py/bin/pip install -r /tmp/requirements.txt && \
     # Shell script that does an if statement checking DEV, if it is true install requirements.dev.txt
@@ -53,10 +57,15 @@ RUN python -m venv /py && \
     # Change the ownership of vol directory and all sub directories to django-user
     chown -R django-user:django-user /vol && \
     # Change the mode so that django-user can make changes to vol directory and all sub directories
-    chmod -R 775 /vol
+    chmod -R 775 /vol && \
+    # Change the scripts directory so that it is executable
+    chmod -R +x /scripts
 
 # Update the PATH variable inside the enviornment, avoids having to define the entire path when running commands
-ENV PATH="/py/bin:$PATH"
+ENV PATH="/scripts:/py/bin:$PATH"
 
 # Specifies the user that you are switching to from the root user
 USER django-user
+# Default command that is run for docker containers that are spawned from our images built by this dockerfile
+# Overriden for developement enviormnent
+CMD ["run.sh"]
